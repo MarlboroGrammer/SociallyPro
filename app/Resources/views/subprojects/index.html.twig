@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/tabulator_modern.css") }}">
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src={{ asset("js/jquery-3.1.1.min.js") }}></script>
+    <script src={{ asset("js/bootstrap.min.js") }}></script>
+    <script src={{ asset("js/jquery.appear.min.js") }}></script>
+    <script src={{ asset("js/jquery.incremental-counter.js") }}></script>
+    <script src={{ asset("js/script.js") }}></script>
+    <script src="{{ asset("js/jquery-ui.js") }}"></script>
+<script src={{ asset("js/tabulator.js") }} ></script>
+
+<script>
+    var subProjectData = [
+
+        {% for subproject in subProjects %}
+        { id:{{ subproject.subprojectId }}, subproject: "{{ subproject.subprojectName }}",Project:"{{ subproject.project.getprojectName() }}",Team:"{{ subproject.team.getTeamName() }}"  },
+        {% endfor %}
+    ];
+    $("#example-table2").tabulator({
+        height:"320px",
+        fitColumns:true,
+        pagination:true,
+        sortBy:"id",
+        sortDir:"asc",
+        columns:[
+            {title:"ID", field:"id", sortable:true, sorter:"number", width:50, editable:false,frozen:true},
+            {title:"SubProject", field:"subproject", sortable:true, sorter:"string",width:250, align:"right",frozen:true},
+            {title:"Team", field:"Team", sortable:true, sorter:"string",width:250, align:"right"},
+            {title:"Project", field:"Project", sortable:true,width:400, sorter:"number"}
+        ]
+
+
+
+    }).tabulator("setData",subProjectData).tabulator({
+
+            rowDblClick:function (e,id) {
+
+                var URL="{{ path('subprojects_edit', { 'id': 'text' })  }}";
+                URL=URL.replace("text",id);
+                window.location= URL;
+            }
+
+        }).tabulator({
+        rowClick: function (e,id) {
+            var URL="{{ path('subprojects_show', { 'id': 'text' })  }}";
+            URL=URL.replace("text",id);
+            window.location= URL;
+
+        }})
+
+</script>
+{% endblock %}
+{% block body %}
+
+    <h1>Subprojects list</h1>
+
+    <div id="example-table2"></div>
+
+{% endblock %}

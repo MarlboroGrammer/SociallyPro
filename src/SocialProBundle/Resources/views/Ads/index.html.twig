@@ -1,0 +1,241 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+    <style>
+        .hide-bullets {
+            list-style:none;
+            margin-left: -40px;
+            margin-top:20px;
+        }
+
+        .thumbnail {
+            padding: 0;
+        }
+
+        .carousel-inner>.item>img, .carousel-inner>.item>a>img {
+            width: 100%;
+        }
+        label{
+            color: #fff;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    {% if is_granted('ROLE_USER') %}
+        <!-- Header
+        ================================================= -->
+        <header id="header">
+            <nav class="navbar navbar-default navbar-fixed-top menu">
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="index-register.html"><img src="images/logo.png" alt="logo" /></a>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right main-menu">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Home <span><img src="images/down-arrow.png" alt="" /></span></a>
+                                <ul class="dropdown-menu newsfeed-home">
+                                    <li><a href="index.html">Landing Page 1</a></li>
+                                    <li><a href="index-register.html">Landing Page 2</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Newsfeed <span><img src="images/down-arrow.png" alt="" /></span></a>
+                                <ul class="dropdown-menu newsfeed-home">
+                                    <li><a href="newsfeed.html">Newsfeed</a></li>
+                                    <li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>
+                                    <li><a href="newsfeed-friends.html">My friends</a></li>
+                                    <li><a href="newsfeed-messages.html">Chatroom</a></li>
+                                    <li><a href="newsfeed-images.html">Images</a></li>
+                                    <li><a href="newsfeed-videos.html">Videos</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Timeline <span><img src="images/down-arrow.png" alt="" /></span></a>
+                                <ul class="dropdown-menu login">
+                                    <li><a href="timeline.html">Timeline</a></li>
+                                    <li><a href="timeline-about.html">Timeline About</a></li>
+                                    <li><a href="timeline-album.html">Timeline Album</a></li>
+                                    <li><a href="timeline-friends.html">Timeline Friends</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle pages" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Post an ad!</a>
+                            </li>
+                            <li class="dropdown"><a href="/logout">Logout</a></li>
+                        </ul>
+                        <form class="navbar-form navbar-right hidden-sm">
+                            <div class="form-group">
+                                <i class="icon ion-android-search"></i>
+                                <input type="text" class="form-control" placeholder="Search friends, photos, videos">
+                            </div>
+                        </form>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container -->
+            </nav>
+        </header>
+        <!--Header End-->
+
+        <div id="page-contents">
+            <div class="container">
+                <div class="row">
+
+                    <!-- Newsfeed Common Side Bar Left
+                    ================================================= -->
+                    <div class="col-md-3 static">
+                        <div class="profile-card">
+                            <img src="http://localhost/SociallyPro/web/uploads/user/{{ user.profilePicture }}" alt="user" class="profile-photo" />
+                            <h5><a href="/profile" class="text-white">{{ user.firstName }} {{ user.lastName }}</a></h5>
+                        </div><!--profile card ends-->
+                        <ul class="nav-news-feed">
+                            <li><i class="icon ion-ios-paper"></i><div><a href="/ads/myads">My Ads</a></div></li>
+                            <li><i class="icon ion-ios-people"></i><div><a href="/ads/chat">Open market</a></div></li>
+                        </ul><!--news-feed links ends-->
+                        <div id="chat-block">
+                            <a href="/groupchat" class="btn btn-success">Chat with other sellers!</a>
+                            
+                        </div><!--chat block ends-->
+                    </div>
+
+                    <div class="col-md-9">
+                        <!-- Post Create Box
+================================================= -->
+                        <div class="create-post">
+                            <div class="tools text-center">
+                                <h1 class="title">Want to sell something?</h1>
+                                <a href="/ads/add" class="btn btn-primary btn-lg">Publish an ad!</a>
+                            </div>
+                        </div><!-- Post Create Box End-->
+
+                        <div class="create-post" style="background-color: #2aabd2; border-radius: 15px;">
+                            <div class="tools">
+                                <h1 style="color: #ffffff;" class="text-center">What are you looking for?</h1>
+                                {{ form_start(search) }}
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-6">
+                                        <label for="">Name</label>
+                                        {{ form_widget(search.keywords) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="">Price between:</label>
+                                        <input type="number" class="form-control" placeholder="min" data-min="0" name="price-min">
+                                        <br>
+                                        <input type="number" class="form-control" placeholder="max" data-min="0" name="price-max">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10">
+                                        <label for="">Category</label>
+                                        {{ form_widget(search.category) }}
+                                        <br>
+                                        <input type="submit" value="Search!" class="btn btn-primary btn-block">
+                                    </div>
+                                </div>
+                                {{ form_end(search) }}
+                            </div>
+                        </div>
+                        <!-- Post Content
+                        ================================================= -->
+                            <div class="row">
+                                <h1>Check out the latest ads!</h1>
+                                {% if count is defined %}
+                                    {% if count < 1 %}
+                                        <h1 style="color: #adadad">Found {{ count }} ads :( .</h1>
+                                    {% else %}
+                                        <h1 style="color: #adadad">Found {{ count }} ads : </h1>
+                                    {% endif %}
+                                {% endif %}
+                                {% for v in ads %}
+                                    {% if v.status == 'A' %}
+                                        {% if loop.first %}
+                                            <div class="row"> {# open row #}
+                                        {% endif %}
+                                        <div class="col-md-3 col-lg-3 ">
+                                            <div class="card card-block">
+                                                <img class="card-img-top" data-src="holder.js/100px180/" alt="100%x180" src={{ asset("uploads/ads/%s"|format(v.image)) }} data-holder-rendered="true" style="height: 180px; width: 100%; display: block;">
+                                                <div class="card-block">
+                                                    <h4 class="card-title">{{ v.title }}</h4>
+
+                                                    <ul class="list-group list-group-flush">
+                                                        <li class="list-group-item"><h6>Posted by: <a href="/profile">{{ v.user.firstName }} {{ v.user.lastName }}</a></h6></li>
+                                                        <li class="list-group-item">
+                                                            <div class="reaction text-center">
+                                                                <a class="btn text-green" onclick="likePost({{ v.announceId }})">
+                                                                    <i class="icon ion-thumbsup"></i>
+                                                                    <span id="ad-like-{{ v.announceId }}">{{ v.likes }}</span>
+                                                                </a>
+                                                                <a class="btn text-red" onclick="dislikePost({{ v.announceId }})" >
+                                                                    <i class="fa fa-thumbs-down"></i>
+                                                                    <span id="ad-dislike-{{ v.announceId }}">{{ v.dislikes }}</span>
+                                                                </a>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">Price: {{ v.price }} TND</li>
+                                                    </ul>
+                                                    <a href="/ads/{{ v.announceId }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if loop.index % 4 == 0 %}
+                                            </div><div class="row"> {# after 4 iterates close row and open new #}
+                                        {% endif %}
+                                        {% if loop.last %}
+                                            </div> {# close last row #}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="navigation text-center">
+                                    {{ knp_pagination_render(ads) }}
+                                </div>
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--preloader-->
+        <div id="spinner-wrapper">
+            <div class="spinner"></div>
+        </div>
+        <script>
+            function likePost(id) {
+                var likes = 0;
+                $.ajax({
+                  url: "/ads/like/"+id,
+                    success: function (result) {
+                        $("#ad-like-"+id).html(result);
+                    }
+                });
+            }
+            function dislikePost(id) {
+                var likes = 0;
+                $.ajax({
+                    url: "/ads/dislike/"+id,
+                    success: function (result) {
+                        $("#ad-dislike-"+id).html(result);
+                    }
+                });
+            }
+        </script>
+    {% else %}
+        <script>
+            window.location.href = "/login";
+        </script>
+    {% endif %}
+
+{% endblock %}
+

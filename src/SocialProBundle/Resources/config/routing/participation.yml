@@ -1,0 +1,29 @@
+participation_index:
+    path:     /{id}/
+    defaults: { _controller: "SocialProBundle:Participation:index" }
+    methods:  GET
+
+participation_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:Participation:show" }
+    methods:  GET
+
+participation_new:
+    path:     /{id}/new
+    defaults: { _controller: "SocialProBundle:Participation:participate" }
+    methods:  [GET, POST]
+
+participation_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:Participation:edit" }
+    methods:  [GET, POST]
+
+participation_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:Participation:delete" }
+    methods:  DELETE
+
+participation_add_motif:
+    path:     /participate/{id}
+    defaults: { _controller: "SocialProBundle:Participation:_participate" }
+

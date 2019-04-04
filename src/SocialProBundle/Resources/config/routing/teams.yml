@@ -1,0 +1,24 @@
+teams_index:
+    path:     /
+    defaults: { _controller: "SocialProBundle:Teams:index" }
+teams_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:Teams:show" }
+teams_new:
+    path:     /new
+    defaults: { _controller: "SocialProBundle:Teams:new" }
+teams_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:Teams:edit" }
+teams_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:Teams:delete" }
+addmembre:
+    path:     /{id}/addmembre
+    defaults: { _controller: "SocialProBundle:Teams:addmembre" }
+add:
+    path:     /{id}/{id1}/add
+    defaults: { _controller: "SocialProBundle:Teams:add" }
+suppmembre:
+    path:     /{id}/suppmembre
+    defaults: { _controller: "SocialProBundle:Teams:suppmembre" }

@@ -1,0 +1,24 @@
+subprojects_index:
+    path:     /{id}
+    defaults: { _controller: "SocialProBundle:SubProjects:index" }
+    methods:  GET
+
+subprojects_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:SubProjects:show" }
+    methods:  GET
+
+subprojects_new:
+    path:     /{id}/new
+    defaults: { _controller: "SocialProBundle:SubProjects:new" }
+    methods:  [GET, POST]
+
+subprojects_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:SubProjects:edit" }
+    methods:  [GET, POST]
+
+subprojects_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:SubProjects:delete" }
+    methods:  DELETE

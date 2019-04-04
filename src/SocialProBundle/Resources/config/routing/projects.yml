@@ -1,0 +1,24 @@
+projects_index:
+    path:     /
+    defaults: { _controller: "SocialProBundle:Projects:index" }
+    methods:  GET
+
+projects_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:Projects:show" }
+    methods:  GET
+
+projects_new:
+    path:     /new
+    defaults: { _controller: "SocialProBundle:Projects:new" }
+    methods:  [GET, POST]
+
+projects_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:Projects:edit" }
+    methods:  [GET, POST]
+
+projects_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:Projects:delete" }
+    methods:  DELETE

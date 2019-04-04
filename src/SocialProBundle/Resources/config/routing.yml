@@ -1,0 +1,167 @@
+social_pro_homepage:
+    path:     /
+    defaults: { _controller: SocialProBundle:Default:index }
+social_pro_chat:
+    path:     /groupchat
+    defaults: { _controller: SocialProBundle:Chat:index }
+social_pro_store_chat:
+    path:     /message/store/{id}/{message}
+    defaults: { _controller: SocialProBundle:Chat:storeChat }
+announcment_add:
+    path:     /ads/add
+    defaults: { _controller: SocialProBundle:Announcment:add }
+announcment_home:
+    path:     /ads
+    defaults: { _controller: SocialProBundle:Announcment:index }
+announcment_myads:
+    path:     /ads/myads
+    defaults: { _controller: SocialProBundle:Announcment:myads }
+announcment_ad_details:
+    path:     /ads/myads/{id}
+    defaults: { _controller: SocialProBundle:Announcment:adDetails }
+announcment_ad_delete:
+    path:     /ads/myads/delete/{id}
+    defaults: { _controller: SocialProBundle:Announcment:adDelete }
+announcment_like:
+    path:     /ads/like/{id}
+    defaults: { _controller: SocialProBundle:Announcment:likeAd }
+announcment_dislike:
+    path:     /ads/dislike/{id}
+    defaults: { _controller: SocialProBundle:Announcment:dislikeAd }
+announcment_show_one:
+    path:     /ads/{id}
+    defaults: { _controller: SocialProBundle:Announcment:someRandom }
+admin_show_postlist_delete:
+    path:     /delete/{id}
+    defaults: { _controller: SocialProBundle:Admin:delete }
+admin_home:
+    path:     /admin
+    defaults: { _controller: SocialProBundle:Default:admin }
+admin_show_userlist:
+    path:     /admin/userlist
+    defaults: { _controller: SocialProBundle:Admin:showUsers }
+admin_show_adlist:
+    path:     /admin/adlist
+    defaults: { _controller: SocialProBundle:Admin:showAds }
+admin_approve_ad:
+    path:     /admin/adlist/approve/{id}
+    defaults: { _controller: SocialProBundle:Admin:approveAd }
+admin_refuse_ad:
+    path:     /admin/adlist/refuse/{id}
+    defaults: { _controller: SocialProBundle:Admin:refuseAd }
+admin_show_postlist:
+    path:     /admin/postlist
+    defaults: { _controller: SocialProBundle:Admin:showPosts }
+
+
+
+#SAIF ADMIN ROUTING START
+admin_filter_postlist:
+    path:     /admin/postlistfiltre
+    defaults: { _controller: SocialProBundle:Admin:filtrer }
+
+recherche_post_DQL:
+    path:     /admin/postlist/recherche
+    defaults: { _controller: SocialProBundle:Admin:rechercheUsernameDQL }
+#SAIF ADMIN ROUTNG END
+
+
+#SAIF ROUTING START
+profile_post:
+    path:     /profilee
+    defaults: { _controller: SocialProBundle:Posts:perso }
+
+update_post:
+    path:     /profilee/{id}
+    defaults: { _controller: SocialProBundle:Posts:modifier }
+
+social_pro_newsfeed:
+    path:     /newsfeed
+    defaults: { _controller: SocialProBundle:Posts:newsfeed }
+
+signaler_post:
+    path:     /newsfeed/{id}
+    defaults: { _controller: SocialProBundle:Posts:signaler }
+#SAIF ROUTING END
+
+
+#YOSRA ROUTING START
+user_tasks:
+    resource: "@SocialProBundle/Resources/config/routing/tasks.yml"
+    prefix:   /admin/tasks
+user_teams:
+    resource: "@SocialProBundle/Resources/config/routing/teams.yml"
+    prefix:   /admin/teams
+fronttasks:
+    path:     /fronttasks
+    defaults: { _controller: "SocialProBundle:Tasks:front" }
+frontteams:
+    path:     /frontteams
+    defaults: { _controller: "SocialProBundle:Teams:front" }
+membreteams:
+    path:     /{id}/membreteams
+    defaults: { _controller: "SocialProBundle:Teams:membreteams" }
+pie:
+    path:     /admin/pie
+    defaults: { _controller: "SocialProBundle:Graphe:Pie" }
+#YOSRA ROUTING END
+
+#NIZAR ROUTING START
+social_pro_complaint:
+    resource: "@SocialProBundle/Resources/config/routing/complaint.yml"
+    prefix:   /complaint
+social_pro_compmsg:
+    resource: "@SocialProBundle/Resources/config/routing/compmsg.yml"
+    prefix:   /compmsg
+complaint_index_backend:
+    path:     /backendlistcomplaint
+    defaults: { _controller: "SocialProBundle:Complaint:backendlistcomplaint" }
+complaint_show_backend:
+    path:     /backendlistcomplaint/{id}/backendshowcomplaint
+    defaults: { _controller: "SocialProBundle:Complaint:backendshowcomplaint" }
+    methods:  [GET, POST]
+#NIZAR ROUTING END
+
+#MOUNIR ROUTING START
+social_pro_projects:
+    resource: "@SocialProBundle/Resources/config/routing/projects.yml"
+    prefix:   /projects
+
+social_pro_subprojects:
+    resource: "@SocialProBundle/Resources/config/routing/subprojects.yml"
+    prefix:   /subprojects
+#MOUNIR ROUTING END
+
+#AICHA ROUTING START
+events_index_backend:
+    path:     /backendIndex
+    defaults: { _controller: "SocialProBundle:Events:backend" }
+
+events_validate_backend:
+    path:     /{id}/backendEdit
+    defaults: { _controller: "SocialProBundle:Events:backendValidate" }
+    methods:  [GET, POST]
+
+events_edit_ajax:
+    path:     /{id}/ajaxEdit
+    defaults: { _controller: "SocialProBundle:Events:ajaxedit" }
+    methods:  [GET, POST]
+
+events_new_backend:
+    path:     /backendNew
+    defaults: { _controller: "SocialProBundle:Events:newBackend" }
+    methods:  [GET, POST]
+
+social_pro_events:
+    resource: "@SocialProBundle/Resources/config/routing/events.yml"
+    prefix:   /events
+
+social_pro_participation:
+    resource: "@SocialProBundle/Resources/config/routing/participation.yml"
+    prefix:   /participation
+#AICHA ROUTING END
+
+
+
+
+

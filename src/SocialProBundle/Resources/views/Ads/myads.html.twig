@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if is_granted('ROLE_USER') %}
+        <!-- Header
+        ================================================= -->
+        <header id="header">
+            <nav class="navbar navbar-default navbar-fixed-top menu">
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/"><img src={{ asset("images/logo.png") }} alt="logo" /></a>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right main-menu">
+                            <li class="dropdown">
+                                <a href="/">Home </a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="/newsfeed" >Newsfeed</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="/profile">Timeline</a>
+                            </li>
+
+                            <li class="dropdown"><a href="/logout">Logout</a></li>
+                        </ul>
+                        <form class="navbar-form navbar-right hidden-sm">
+                            <div class="form-group">
+                                <i class="icon ion-android-search"></i>
+                                <input type="text" class="form-control" placeholder="Search friends, photos, videos">
+                            </div>
+                        </form>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container -->
+            </nav>
+        </header>
+        <!--Header End-->
+
+        <div id="page-contents">
+            <div class="container">
+                <div class="row">
+
+                    <!-- Newsfeed Common Side Bar Left
+                    ================================================= -->
+                    <div class="col-md-3 static">
+                        <div class="profile-card">
+                            <img src={{ user.profilePicture }} alt="user" class="profile-photo" />
+                            <h5><a href="/profile" class="text-white">{{ user.firstName }} {{ user.lastName }}</a></h5>
+                        </div><!--profile card ends-->
+                        <ul class="nav-news-feed">
+                            <li><i class="icon ion-ios-paper"></i><div><a href="/ads">All Ads</a></div></li>
+
+                        </ul><!--news-feed links ends-->
+                        <div id="chat-block">
+                            <div class="title">Chat online</div>
+                            <ul class="online-users list-inline">
+                                <li><a href="newsfeed-messages.html" title="Linda Lohan"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Sophia Lee"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="John Doe"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Alexis Clark"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="James Carter"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Robert Cook"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Richard Bell"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Anna Young"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                                <li><a href="newsfeed-messages.html" title="Julia Cox"><img src="http://placehold.it/300x300" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>
+                            </ul>
+                        </div><!--chat block ends-->
+                    </div>
+
+                    <div class="col-md-9">
+                        {% if app.session.flashBag.has('Notice') %}
+                            <div class="alert alert-success fade in" role="alert">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                {% for msg in app.session.flashBag.get('Notice') %}
+                                    {{ msg }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <!-- Post Create Box ================================================= -->
+                        {% if ad_count < 1 %}
+                        <div class="row">
+                            <div class="container text-center">
+                                <h1 class="title"> YOU HAVE NO ADS</h1>
+                                <img src={{ asset("images/sademp.jpg") }} alt="">
+                                <h2>How about selling an item?</h2>
+                                <p>Click the button below to add something!</p>
+                                <a href="/ads/add" class="btn btn-primary btn-lg">Publish an ad!</a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="row">
+                                {% for ad in ads %}
+                                    {% if loop.first %}
+                                        <div class="row"> {# open row #}
+                                    {% endif %}
+                                    <div class="col-md-3">.
+                                        <div class="well">
+                                            {% if ad.status == 'P' %}
+                                            <label class="label label-warning">PENDING</label>
+                                            {% elseif ad.status == 'A' %}
+                                            <label class="label label-success">ACCEPTED</label>
+                                            {% else %}
+                                            <label class="label label-danger">REFUSED</label>
+                                            {% endif %}
+                                            <img src={{ asset("uploads/ads/%s"|format(ad.image)) }} alt="" class="img-responsive img-circle">
+                                            <hr>
+                                            <p>{{ ad.title }}</p>
+                                            <p>Price: <span class="following">{{ ad.price }} TND</span></p>
+                                            <hr>
+                                            <p>{{ ad.desc }}</p>
+                                            {% if ad.status == 'P' %}
+                                            <a href="/ads/myads/{{ ad.announceId }}" class="btn btn-warning"><i class="fa fa-pencil"></i></a>
+                                            {% endif %}
+                                            <a data-toggle="modal" href="#myModal" onclick="delAction({{ ad.announceId }})" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </div>
+                                    {% if loop.index % 4 == 0 %}
+                                        </div><div class="row"> {# after 3 iterates close row and open new #}
+                                    {% endif %}
+                                    {% if loop.last %}
+                                      </div> {# close last row #}
+                                    {% endif %}
+                                {% endfor %}
+                        </div>
+                        {% endif  %}
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- Deletetion Modal -->
+        <div id="myModal" class="modal fade in">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm deletetion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this ad?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group">
+                            <button class="btn btn-success" data-dismiss="modal" id="cancel"><span class="fa fa-times"></span> Cancel</button>
+                            <button class="btn btn-danger" id="save"><span class="fa fa-check"></span> Save</button>
+                        </div>
+                    </div>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dalog -->
+        </div><!-- /.modal -->
+        <!-- ============================ -->
+        <!--preloader-->
+        <div id="spinner-wrapper">
+            <div class="spinner"></div>
+        </div>
+        <script>
+            function delAction(id) {
+                    event.preventDefault();
+                    $('#save').click(function () {
+                        window.location.href = "/ads/myads/delete/"+id;
+                    })
+            }
+        </script>
+    {% else %}
+        <script>
+            window.location.href = "/login";
+        </script>
+    {% endif %}
+
+{% endblock %}
+

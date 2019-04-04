@@ -1,0 +1,24 @@
+compmsg_index:
+    path:     /
+    defaults: { _controller: "SocialProBundle:Compmsg:index" }
+    methods:  GET
+
+compmsg_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:Compmsg:show" }
+    methods:  GET
+
+compmsg_new:
+    path:     /new
+    defaults: { _controller: "SocialProBundle:Compmsg:new" }
+    methods:  [GET, POST]
+
+compmsg_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:Compmsg:edit" }
+    methods:  [GET, POST]
+
+compmsg_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:Compmsg:delete" }
+    methods:  DELETE

@@ -1,0 +1,204 @@
+{% extends 'adbase.html.twig' %}
+{% block javascripts %}
+    <script src={{  asset("admin/lib/jquery-1.11.1.min.js") }} type="text/javascript"></script>
+    <script src={{ asset("admin/lib/jQuery-Knob/js/jquery.knob.js") }} type="text/javascript"></script>
+    <script src={{ asset("admin/lib/bootstrap/js/bootstrap.js") }}></script>
+    <script type="text/javascript">
+        $("[rel=tooltip]").tooltip();
+        $(function() {
+            $('.demo-cancel-click').click(function(){return false;});
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+            var match = document.cookie.match(new RegExp('color=([^;]+)'));
+            if(match) var color = match[1];
+            if(color) {
+                $('body').removeClass(function (index, css) {
+                    return (css.match (/\btheme-\S+/g) || []).join(' ')
+                })
+                $('body').addClass('theme-' + color);
+            }
+
+            $('[data-popover="true"]').popover({html: true});
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(function() {
+            var uls = $('.sidebar-nav > ul > *').clone();
+            uls.addClass('visible-xs');
+            $('#main-menu').append(uls.clone());
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <style type="text/css">
+            #line-chart {
+                height:300px;
+                width:800px;
+                margin: 0px auto;
+                margin-top: 1em;
+            }
+            .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+                color: #fff;
+            }
+        </style>
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <!-- Le fav and touch icons -->
+        <link rel="shortcut icon" href={{ asset("../admin/assets/ico/favicon.ico") }}>
+
+        <!--[if lt IE 7 ]> <body class="ie ie6"> <![endif]-->
+        <!--[if IE 7 ]> <body class="ie ie7 "> <![endif]-->
+        <!--[if IE 8 ]> <body class="ie ie8 "> <![endif]-->
+        <!--[if IE 9 ]> <body class="ie ie9 "> <![endif]-->
+        <!--[if (gt IE 9)|!(IE)]><!-->
+
+        <!--<![endif]-->
+
+        <div class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="" href="index.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> Aircraft</span></a></div>
+
+            <div class="navbar-collapse collapse" style="height: 1px;">
+                <ul id="main-menu" class="nav navbar-nav navbar-right">
+                    <li class="dropdown hidden-xs">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"></span> Jack Smith
+                            <i class="fa fa-caret-down"></i>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li><a href="./">My Account</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Admin Panel</li>
+                            <li><a href="./">Users</a></li>
+                            <li><a href="./">Security</a></li>
+                            <li><a tabindex="-1" href="./">Payments</a></li>
+                            <li class="divider"></li>
+                            <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        </div>
+
+
+        <div class="sidebar-nav">
+            <ul>
+                <li><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i> Dashboard<i class="fa fa-collapse"></i></a></li>
+                <li>
+                    <ul class="dashboard-menu nav nav-list collapse in">
+                        <li><a href="/admin"><span class="fa fa-caret-right"></span> Main</a></li>
+                        <li ><a href="/admin/userlist"><span class="fa fa-caret-right"></span>Liste des utilisateurs</a></li>
+                        <li ><a href="/admin/adlist"><span class="fa fa-caret-right"></span>Liste des annonces</a></li>
+                        <li ><a href="/admin/postlist"><span class="fa fa-caret-right"></span>Liste des publications</a></li>
+                        <li ><a href="/admin/teams"><span class="fa fa-caret-right"></span>Gestion Equipes</a></li>
+                        <li ><a href="/admin/tasks"><span class="fa fa-caret-right"></span>Gestion Taches</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="header">
+                <div class="stats">
+                    <p class="stat"><span class="label label-info">5</span> Tickets</p>
+                    <p class="stat"><span class="label label-success">27</span> Tasks</p>
+                    <p class="stat"><span class="label label-danger">15</span> Overdue</p>
+                </div>
+
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+                <div class="row">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading no-collapse">Comlaint list<span class="label label-warning">+ {{ nbr }}</span></div>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <!--   <th>Complaintid</th> -->
+                                <th>Employee</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for complaint in complaints %}
+                                <tr>
+                                    <!--  <td><a href="{{ path('complaint_show', { 'id': complaint.complaintId }) }}">{{ complaint.complaintId }}</a></td>-->
+                                    <td>{{ complaint.employee.firstName }} {{ complaint.employee.lastName }}</td>
+                                    <td>{{ complaint.title }}</td>
+                                    <td>{{ complaint.description }}</td>
+                                    <td>{% if complaint.dateComplaint %}{{ complaint.dateComplaint|date('Y-m-d H:i:s') }}{% endif %}</td>
+                                   {% if complaint.status=="pending" %}
+                                    <td> <p style="color: red">{{ complaint.status }}</p></td>
+                                    {% else %}
+                                    <td> <p style="color: green">{{ complaint.status }}</p></td>
+                                   {% endif %}
+
+
+                                    <td>
+                                        <ul>
+                                            <li>
+                                                <a href="{{ path('complaint_show_backend', { 'id': complaint.complaintId }) }}">detail</a>
+                                            </li>
+                                         <!--   <li>
+                                                <a href="{{ path('complaint_edit', { 'id': complaint.complaintId }) }}">edit</a>
+                                            </li>-->
+
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+
+                <footer>
+                    <hr>
+
+                    <!-- Purchase a site license to remove this link from the footer: http://www.portnine.com/bootstrap-themes -->
+                    <p class="pull-right">A <a href="http://www.portnine.com/bootstrap-themes" target="_blank">Free Bootstrap Theme</a> by <a href="http://www.portnine.com" target="_blank">Portnine</a></p>
+                    <p>© 2014 <a href="http://www.portnine.com" target="_blank">Portnine</a></p>
+                </footer>
+            </div>
+        </div>
+
+    {% else %}
+        <script>
+            window.location.href = "/login";
+        </script>
+
+    {% endif %}
+
+{% endblock %}

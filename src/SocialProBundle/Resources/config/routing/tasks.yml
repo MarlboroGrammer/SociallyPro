@@ -1,0 +1,29 @@
+tasks_index:
+    path:     /
+    defaults: { _controller: "SocialProBundle:Tasks:index" }
+
+
+tasks_show:
+    path:     /{id}/show
+    defaults: { _controller: "SocialProBundle:Tasks:show" }
+
+tasks_new:
+    path:     /new
+    defaults: { _controller: "SocialProBundle:Tasks:new" }
+
+
+tasks_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "SocialProBundle:Tasks:edit" }
+
+
+tasks_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "SocialProBundle:Tasks:delete" }
+doing:
+    path:     /{id}/doing
+    defaults: { _controller: "SocialProBundle:Tasks:doing" }
+don:
+    path:     /{id}/don
+    defaults: { _controller: "SocialProBundle:Tasks:don" }
+

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Complaint</h1>
+
+    <table class="table2">
+        <tbody>
+            <tr>
+                <th>Complaintid</th>
+                <td>{{ complaint.complaintId }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ complaint.title }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ complaint.description }}</td>
+            </tr>
+            <tr>
+                <th>Datecomplaint</th>
+                <td>{% if complaint.dateComplaint %}{{ complaint.dateComplaint|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ complaint.status }}</td>
+            </tr>
+            <tr>
+                <th>Answer</th>
+                <td>{{ complaint.answer }}</td>
+            </tr>
+            <tr>
+                <th>Seen</th>
+                <td>{{ complaint.seen }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('complaint_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('complaint_edit', { 'id': complaint.complaintId }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

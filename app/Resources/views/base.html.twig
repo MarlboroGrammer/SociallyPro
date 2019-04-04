@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="This is social network html5 template available in themeforest......" />
+        <meta name="keywords" content="Social Network, Social Media, Make Friends, Newsfeed, Profile Page" />
+        <meta name="robots" content="index, follow" />
+        <title>Friend Finder | A Complete Social Network Template</title>
+
+
+        <!--Favicon-->
+        <link rel="shortcut icon" type="image/png" href="images/fav.png"/>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+            <!-- Stylesheets
+================================================= -->
+            <link rel="stylesheet" href={{ asset("css/bootstrap.min.css") }}/>
+            <link rel="stylesheet" href={{ asset("css/style.css") }} />
+            <link rel="stylesheet" href={{ asset("css/ionicons.min.css") }} />
+            <link rel="stylesheet" href={{ asset("css/font-awesome.min.css") }} />
+            <link rel="stylesheet" type="text/css" href="{{ asset('css/rating.css') }}" />
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        {% block javascripts %}
+            <script src={{ asset("js/jquery-3.1.1.min.js") }}></script>
+            <script src={{ asset("js/bootstrap.min.js") }}></script>
+            <script src={{ asset("js/jquery.appear.min.js") }}></script>
+            <script src={{ asset("js/jquery.incremental-counter.js") }}></script>
+            <script src={{ asset("js/script.js") }}></script>
+            <script src={{ asset("js/rating.js") }}></script>
+        {% endblock %}
+    </body>
+</html>

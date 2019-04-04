@@ -1,0 +1,554 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href={{ asset("css/separate/vendor/bootstrap-datetimepicker.min.css") }}/>
+    <link rel="stylesheet" href={{ asset("css/lib/fullcalendar/fullcalendar.min.css") }}/>
+    <link rel="stylesheet" href={{ asset("css/separate/pages/calendar.min.css") }}/>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+
+            /* ==========================================================================
+             Fullcalendar
+             ========================================================================== */
+
+            $('#calendar').fullCalendar({
+                header: {
+                    left: '',
+                    center: 'prev, title, next',
+                    right: 'today agendaDay,agendaTwoDay,agendaWeek,month'
+                },
+                buttonIcons: {
+                    prev: 'font-icon font-icon-arrow-left',
+                    next: 'font-icon font-icon-arrow-right',
+                    prevYear: 'font-icon font-icon-arrow-left',
+                    nextYear: 'font-icon font-icon-arrow-right'
+                },
+                defaultDate: '2017-04-12',
+                editable: false,
+                selectable: true,
+                eventLimit: true, // allow "more" link when too many events
+                weekNumbersWithinDays: true,
+                events: [
+                    {% for event in events %}
+                    {
+                        id: '{{ event.eventId }}',
+                        title: '{{ event.eventName }}',
+                        className: '{{ event.eventAddress }}',
+                        start: '{{ event.eventDate | date('Y-m-d') }}'
+                    },
+                    {% endfor %}
+
+                ],
+
+                viewRender: function (view, element) {
+
+                    if (!("ontouchstart" in document.documentElement)) {
+                        $('.fc-scroller').jScrollPane({
+                            autoReinitialise: true,
+                            autoReinitialiseDelay: 100
+                        });
+                    }
+
+                    $('.fc-popover.click').remove();
+                },
+                eventClick: function (calEvent, jsEvent, view) {
+
+                    var eventEl = $(this);
+                    var url = "{{ path('events_show', { 'id': 'eventId' }) }}";
+                    var url2 = "{{ path('events_edit', { 'id': 'eventId' }) }}";
+                    var url3 = "{{ path('events_delete_classic',{'id':'eventId'}) }}"
+                    url = url.replace('eventId', calEvent.id);
+                    url2 = url2.replace('eventId', calEvent.id);
+                    url3 = url3.replace('eventId', calEvent.id);
+                    // Add and remove event border class
+                    if (!$(this).hasClass('event-clicked')) {
+                        $('.fc-event').removeClass('event-clicked');
+
+                        $(this).addClass('event-clicked');
+                    }
+
+                    // Add popover
+                    $('body').append(
+                        '<div class="fc-popover click">' +
+                        '<div class="fc-header">' +
+                        moment(calEvent.start).format('dddd • D') +
+                        '<button type="button" class="cl"><i class="font-icon-close-2"></i></button>' +
+                        '</div>' +
+
+                        '<div class="fc-body main-screen">' +
+                        '<p>' + 'Date: ' +
+                        moment(calEvent.start).format('dddd, D YYYY') +
+                        '</p>' +
+
+                        '<p class="color-blue-grey">' + 'Event Name: ' + calEvent.title + '<br/>' + 'Address: ' + calEvent.className + '</p>' +
+                        '<ul class="actions">' +
+                        '<li><a href="' + url + '">More details</a></li>' +
+                        '</ul>' +
+                        '</div>' +
+
+                        '<div class="fc-body remove-confirm">' +
+                        '<p>Are you sure to remove event?</p>' +
+                        '<div class="text-center">' +
+                        '<a href="' + url3 + '"  type="button" class="btn btn-rounded btn-sm">Yes</a>' +
+                        '<button id="remove_btn_event_no" type="button" class="btn btn-rounded btn-sm btn-default remove-popover">No</button>' +
+                        '</div>' +
+                        '</div>' +
+
+                        '<div class="fc-body edit-event">' +
+                        '<p>Edit event</p>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group date datetimepicker">' +
+                        '<input type="text" class="form-control" />' +
+                        '<span class="input-group-addon"><i class="font-icon font-icon-calend"></i></span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group date datetimepicker-2">' +
+                        '<input type="text" class="form-control" />' +
+                        '<span class="input-group-addon"><i class="font-icon font-icon-clock"></i></span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                        '<textarea class="form-control" rows="2">Name Surname Patient Surgey ACL left knee</textarea>' +
+                        '</div>' +
+                        '<div class="text-center">' +
+                        '<button type="button" class="btn btn-rounded btn-sm">Save</button>' +
+                        '<button type="button" class="btn btn-rounded btn-sm btn-default remove-popover">Cancel</button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+
+                    // Datepicker init
+                    $('.fc-popover.click .datetimepicker').datetimepicker({
+                        widgetPositioning: {
+                            horizontal: 'right'
+                        }
+                    });
+
+                    $('.fc-popover.click .datetimepicker-2').datetimepicker({
+                        widgetPositioning: {
+                            horizontal: 'right'
+                        },
+                        format: 'LT',
+                        debug: true
+                    });
+
+
+                    // Position popover
+                    function posPopover() {
+                        $('.fc-popover.click').css({
+                            left: eventEl.offset().left + eventEl.outerWidth() / 2,
+                            top: eventEl.offset().top + eventEl.outerHeight()
+                        });
+                    }
+
+                    posPopover();
+
+                    $('.fc-scroller, .calendar-page-content, body').scroll(function () {
+                        posPopover();
+                    });
+
+                    $(window).resize(function () {
+                        posPopover();
+                    });
+
+
+                    // Remove old popover
+                    if ($('.fc-popover.click').length > 1) {
+                        for (var i = 0; i < ($('.fc-popover.click').length - 1); i++) {
+                            $('.fc-popover.click').eq(i).remove();
+                        }
+                    }
+
+                    // Close buttons
+                    $('.fc-popover.click .cl, .fc-popover.click .remove-popover').click(function () {
+                        $('.fc-popover.click').remove();
+                        $('.fc-event').removeClass('event-clicked');
+                    });
+
+                    // Actions link
+                    $('.fc-event-action-edit').click(function (e) {
+                        e.preventDefault();
+
+                        $('.fc-popover.click .main-screen').hide();
+                        $('.fc-popover.click .edit-event').show();
+                    });
+
+                    $('.fc-event-action-remove').click(function (e) {
+                        e.preventDefault();
+
+                        $('.fc-popover.click .main-screen').hide();
+                        $('.fc-popover.click .remove-confirm').show();
+                    });
+                    $('#remove_btn_event_no').click(function (e) {
+
+                        $('.fc-popover.click .remove-confirm').hide();
+                    })
+
+                }
+            });
+
+
+            /* ==========================================================================
+             Side datepicker
+             ========================================================================== */
+
+            $('#side-datetimepicker').datetimepicker({
+                inline: true,
+                format: 'DD/MM/YYYY'
+            });
+
+            /* ========================================================================== */
+
+        });
+
+
+        /* ==========================================================================
+         Calendar page grid
+         ========================================================================== */
+
+        (function ($, viewport) {
+            $(document).ready(function () {
+
+                if (viewport.is('>=lg')) {
+                    $('.calendar-page-content, .calendar-page-side').matchHeight();
+                }
+
+                // Execute code each time window size changes
+                $(window).resize(
+                    viewport.changed(function () {
+                        if (viewport.is('<lg')) {
+                            $('.calendar-page-content, .calendar-page-side').matchHeight({remove: true});
+                        }
+                    })
+                );
+            });
+        })(jQuery, ResponsiveBootstrapToolkit);
+
+
+    </script>
+    <script src={{ asset("js/lib/jquery/jquery.min.js") }}></script>
+    <script src={{ asset("js/lib/tether/tether.min.js") }}></script>
+    <script src={{ asset("js/lib/bootstrap/bootstrap.min.js") }}></script>
+    <script src={{ asset("js/plugins.js") }}></script>
+
+    <script type="text/javascript" src={{ asset("js/lib/match-height/jquery.matchHeight.min.js") }}></script>
+    <script type="text/javascript" src={{ asset("js/lib/moment/moment-with-locales.min.js") }}></script>
+    <script type="text/javascript"
+            src={{ asset("js/lib/eonasdan-bootstrap-datetimepicker/bootstrap-datetimepicker.min.js") }}></script>
+    <script src={{ asset("js/lib/fullcalendar/fullcalendar.min.js") }}></script>
+
+    <script src={{ asset("js/app.js") }}></script>
+{% endblock %}
+{% block body %}
+    {% if is_granted('ROLE_USER') %}
+        {% block content %}
+            <header id="header">
+                <nav class="navbar navbar-default navbar-fixed-top menu">
+                    <div class="container">
+
+                        <!-- Brand and toggle get grouped for better mobile display -->
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="#"><img src="{{ asset('images/test.png') }}" alt="logo"/></a>
+                        </div>
+
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav navbar-right main-menu">
+                                <li class="dropdown"><a href="#">Home</a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                       aria-haspopup="true" aria-expanded="false">Newsfeed </a>
+                                    <ul class="dropdown-menu newsfeed-home">
+                                        <li><a href="#">Newsfeed</a></li>
+                                        <li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>
+                                        <li><a href="#">My friends</a></li>
+                                        <li><a href="newsfeed-messages.html">Chatroom</a></li>
+                                        <li><a href="newsfeed-images.html">Images</a></li>
+                                        <li><a href="newsfeed-videos.html">Videos</a></li>
+
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                       aria-haspopup="true" aria-expanded="false">Timeline </a>
+                                    <ul class="dropdown-menu login">
+                                        <li><a href="timeline.html">Timeline</a></li>
+                                        <li><a href="timeline-about.html">Timeline About</a></li>
+                                        <li><a href="timeline-album.html">Timeline Album</a></li>
+                                        <li><a href="timeline-friends.html">Timeline Friends</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle pages" data-toggle="dropdown" role="button"
+                                       aria-haspopup="true" aria-expanded="false">All Pages </a>
+                                    <ul class="dropdown-menu page-list">
+                                        <li><a href="#">Landing Page</a></li>
+                                        <li><a href="#">Newsfeed</a></li>
+                                        <li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>
+                                        <li><a href="#">My friends</a></li>
+                                        <li><a href="newsfeed-messages.html">Chatroom</a></li>
+                                        <li><a href="newsfeed-images.html">Images</a></li>
+                                        <li><a href="newsfeed-videos.html">Videos</a></li>
+                                        <li><a href="timeline.html">Timeline</a></li>
+                                        <li><a href="timeline-about.html">Timeline About</a></li>
+                                        <li><a href="timeline-album.html">Timeline Album</a></li>
+                                        <li><a href="timeline-friends.html">Timeline Friends</a></li>
+                                        <li><a href="">Contact Us</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown"><a href="/logout">Logout</a></li>
+                            </ul>
+                            <form class="navbar-form navbar-right hidden-sm">
+                                <div class="form-group">
+                                    <i class="icon ion-android-search"></i>
+                                    <input type="text" class="form-control"
+                                           placeholder="Search friends, photos, videos">
+                                </div>
+                            </form>
+                        </div><!-- /.navbar-collapse -->
+                    </div><!-- /.container -->
+                </nav>
+            </header>
+            <div id="page-contents">
+                <div class="container">
+                    <div class="row">
+
+                        <!-- Newsfeed Common Side Bar Left
+                  ================================================= -->
+                        <div class="col-md-3" style="position:static;">
+                            <div class="profile-card">
+                                <img src="{{ asset('images/users/user-1.jpg') }}" alt="user" class="profile-photo"/>
+                                <h5><a href="timeline.html"
+                                       class="text-white">{{ user.firstName }} {{ user.lastName }}</a></h5>
+                                <a href="#" class="text-white"><i class="ion ion-android-person-add"></i> 1,299
+                                    followers</a>
+                            </div><!--profile card ends-->
+                            <ul class="nav-news-feed">
+                                <li><i class="icon ion-ios-paper"></i>
+                                    <div><a href="newsfeed.html">My Newsfeed</a></div>
+                                </li>
+                                <li><i class="icon ion-ios-people"></i>
+                                    <div><a href="newsfeed-people-nearby.html">People Nearby</a></div>
+                                </li>
+                                <li><i class="icon ion-ios-people-outline"></i>
+                                    <div><a href="newsfeed-friends.html">Friends</a></div>
+                                </li>
+                                <li><i class="icon ion-chatboxes"></i>
+                                    <div><a href="newsfeed-messages.html">Messages</a></div>
+                                </li>
+                                <li><i class="icon ion-images"></i>
+                                    <div><a href="newsfeed-images.html">Images</a></div>
+                                </li>
+                                <li><i class="icon ion-ios-videocam"></i>
+                                    <div><a href="newsfeed-videos.html">Videos</a></div>
+                                </li>
+                                <li><i class="icon ion-ios-paper"></i>
+                                    <div><a href="{{ path('events_index') }}">Events</a></div>
+                                </li>
+                                <li><i class="icon ion-ios-paper"></i>
+                                    <div><a href="{{ path('events_index_suggested') }}">Events Suggested</a></div>
+                                </li>
+                            </ul><!--news-feed links ends-->
+                            <div id="chat-block">
+                                <div class="title">Chat online</div>
+                                <ul class="online-users list-inline">
+                                    <li><a href="newsfeed-messages.html" title="Linda Lohan"><img
+                                                    src="{{ asset('images/users/user-2.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Sophia Lee"><img
+                                                    src="{{ asset('images/users/user-3.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="John Doe"><img
+                                                    src="{{ asset('images/users/user-4.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Alexis Clark"><img
+                                                    src="{{ asset('images/users/user-5.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="James Carter"><img
+                                                    src="{{ asset('images/users/user-6.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Robert Cook"><img
+                                                    src="{{ asset('images/users/user-7.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Richard Bell"><img
+                                                    src="{{ asset('images/users/user-8.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Anna Young"><img
+                                                    src="{{ asset('images/users/user-9.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                    <li><a href="newsfeed-messages.html" title="Julia Cox"><img
+                                                    src="{{ asset('images/users/user-10.jpg') }}" alt="user"
+                                                    class="img-responsive profile-photo"/><span
+                                                    class="online-dot"></span></a></li>
+                                </ul>
+                            </div><!--chat block ends-->
+                        </div>
+                        <div class="col-md-7">
+
+                            <!-- Post Create Box
+                            ================================================= -->
+                            <div class="create-post">
+                                <div class="row">
+                                    <div class="col-md-7 col-sm-7">
+                                        <div class="form-group">
+                                            <img src="{{ asset('images/users/user-1.jpg') }}" alt=""
+                                                 class="profile-photo-md"/>
+                                            <textarea name="texts" id="exampleTextarea" cols="30" rows="1"
+                                                      class="form-control" placeholder="Write what you wish"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-5">
+                                        <div class="tools">
+                                            <ul class="publishing-tools list-inline">
+                                                <li><a href="#"><i class="ion-compose"></i></a></li>
+                                                <li><a href="#"><i class="ion-images"></i></a></li>
+                                                <li><a href="#"><i class="ion-ios-videocam"></i></a></li>
+                                                <li><a href="#"><i class="ion-map"></i></a></li>
+                                            </ul>
+                                            <button class="btn btn-primary pull-right">Publish</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- Post Create Box End -->
+
+                            <div>
+                                <div>
+                                    <div class="calendar-page-content">
+                                        <div class="calendar-page-title" >
+                                        </div>
+                                        <h3 align="center">
+                                            List of Events </h3>
+                                        <div class="calendar-page-content-in">
+                                            <div id='calendar'> </div>
+                                        </div><!--.calendar-page-content-in-->
+                                    </div><!--.calendar-page-content--></div>
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('events_new') }}">Create a new event</a>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Newsfeed Common Side Bar Right
+                  ================================================= -->
+                        <div class="col-md-2 static">
+                            <div class="suggestions" id="sticky-sidebar">
+                                <h4 class="grey">Who to Follow</h4>
+                                <div class="follow-user">
+                                    <img src="{{ asset('images/users/user-11.jpg') }}" alt=""
+                                         class="profile-photo-sm pull-left"/>
+                                    <div>
+                                        <h5><a href="#">Diana Amber</a></h5>
+                                        <a href="#" class="text-green">Add friend</a>
+                                    </div>
+                                </div>
+                                <div class="follow-user">
+                                    <img src="{{ asset('images/users/user-12.jpg') }}" alt=""
+                                         class="profile-photo-sm pull-left"/>
+                                    <div>
+                                        <h5><a href="#">Cris Haris</a></h5>
+                                        <a href="#" class="text-green">Add friend</a>
+                                    </div>
+                                </div>
+                                <div class="follow-user">
+                                    <img src="{{ asset('images/users/user-13.jpg') }}" alt=""
+                                         class="profile-photo-sm pull-left"/>
+                                    <div>
+                                        <h5><a href="#">Brian Walton</a></h5>
+                                        <a href="#" class="text-green">Add friend</a>
+                                    </div>
+                                </div>
+                                <div class="follow-user">
+                                    <img src="{{ asset('images/users/user-14.jpg') }}" alt=""
+                                         class="profile-photo-sm pull-left"/>
+                                    <div>
+                                        <h5><a href="#">Olivia Steward</a></h5>
+                                        <a href="#" class="text-green">Add friend</a>
+                                    </div>
+                                </div>
+                                <div class="follow-user">
+                                    <img src="{{ asset('images/users/user-15.jpg') }}" alt=""
+                                         class="profile-photo-sm pull-left"/>
+                                    <div>
+                                        <h5><a href="#">Sophia Page</a></h5>
+                                        <a href="#" class="text-green">Add friend</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-contents">
+
+                <div class="container-fluid">
+
+                    <div class="box-typical">
+                        <div class="calendar-page">
+
+
+                            <div class="calendar-page-side">
+                                <section class="calendar-page-side-section">
+                                    <div class="calendar-page-side-section-in">
+                                        <div id="side-datetimepicker"></div>
+                                    </div>
+                                </section>
+
+                                <section class="calendar-page-side-section">
+                                    <header class="box-typical-header-sm">Surgery on march 18</header>
+                                    <div class="calendar-page-side-section-in">
+                                        <ul class="exp-timeline">
+                                            <li class="exp-timeline-item">
+                                                <div class="dot"></div>
+                                                <div>10:00</div>
+                                                <div class="color-blue-grey">Name Surname Patient Surgey ACL left knee
+                                                </div>
+                                            </li>
+                                            <li class="exp-timeline-item">
+                                                <div class="dot"></div>
+                                                <div>10:00</div>
+                                                <div class="color-blue-grey">Name Surname Patient Surgey ACL left knee
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </section>
+
+
+                            </div><!--.calendar-page-side-->
+                        </div><!--.calendar-page-->
+                    </div><!--.box-typical-->
+                </div><!--.container-fluid-->
+            </div>
+        {% endblock %}
+    {% else %}
+        <script>
+            window.location.href = "/login";
+        </script>
+    {% endif %}
+{% endblock %}
+

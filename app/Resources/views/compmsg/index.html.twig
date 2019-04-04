@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Compmsgs list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Msg</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for compmsg in compmsgs %}
+            <tr>
+                <td><a href="{{ path('compmsg_show', { 'id': compmsg.id }) }}">{{ compmsg.id }}</a></td>
+                <td>{{ compmsg.msg }}</td>
+                <td>{% if compmsg.date %}{{ compmsg.date|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('compmsg_show', { 'id': compmsg.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('compmsg_edit', { 'id': compmsg.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('compmsg_new') }}">Create a new compmsg</a>
+        </li>
+    </ul>
+{% endblock %}
